@@ -7,6 +7,37 @@ description: Generate and decode QR codes using CaoLiao QR Code API. Use when th
 
 使用草料二维码开放 API 生成和解码二维码，无需 API Key。
 
+## 运行时选择：Python 或 Node.js
+
+所有脚本同时提供 Python 和 Node.js 两个版本，功能和参数完全一致。**执行任何脚本前，先确定运行时。**
+
+**选择策略：**
+
+1. 优先检测用户环境中是否有 Python（`python --version`）
+2. 若 Python 不可用，使用 Node.js（`node --version`）
+3. 两者都有时默认用 Python
+
+**命令对照表：**
+
+| 功能 | Python | Node.js |
+|------|--------|---------|
+| 单个生成保存 | `python scripts/generate.py ...` | `node scripts/generate.js ...` |
+| 单个解码 | `python scripts/decode.py ...` | `node scripts/decode.js ...` |
+| 批量生成 | `python scripts/batch_generate.py ...` | `node scripts/batch_generate.js ...` |
+| 批量解码 | `python scripts/batch_decode.py ...` | `node scripts/batch_decode.js ...` |
+
+所有参数名、输出 JSON 格式完全相同，仅将 `python` 替换为 `node`、`.py` 替换为 `.js`。
+
+**差异说明：**
+- Python 版本地解码使用 `zxingcpp`，输出 `"source": "zxing"`
+- Node.js 版本地解码使用 `jsQR`，输出 `"source": "jsqr"`
+
+**依赖安装：**
+- Python：`pip install -r requirements.txt`
+- Node.js：`npm install`（在 skill 目录下执行）
+
+---
+
 ## 生成二维码
 
 将文本或 URL 编码为二维码图片，直接返回图片 URL 并提供预览。
@@ -303,37 +334,6 @@ python scripts/batch_decode.py --input <文件> [--column <列名或索引>] [--
 结果已写入：<output_file>
 TXT 输出：<output_txt>（仅单独输出时显示）
 ```
-
----
-
-## 运行时选择：Python 或 Node.js
-
-所有脚本同时提供 Python 和 Node.js 两个版本，功能和参数完全一致。
-
-**选择策略：**
-
-1. 优先检测用户环境中是否有 Python（`python --version`）
-2. 若 Python 不可用，使用 Node.js（`node --version`）
-3. 两者都有时默认用 Python
-
-**命令对照表：**
-
-| 功能 | Python | Node.js |
-|------|--------|---------|
-| 单个生成保存 | `python scripts/generate.py ...` | `node scripts/generate.js ...` |
-| 单个解码 | `python scripts/decode.py ...` | `node scripts/decode.js ...` |
-| 批量生成 | `python scripts/batch_generate.py ...` | `node scripts/batch_generate.js ...` |
-| 批量解码 | `python scripts/batch_decode.py ...` | `node scripts/batch_decode.js ...` |
-
-所有参数名、输出 JSON 格式完全相同，仅将 `python` 替换为 `node`、`.py` 替换为 `.js`。
-
-**差异说明：**
-- Python 版本地解码使用 `zxingcpp`，输出 `"source": "zxing"`
-- Node.js 版本地解码使用 `jsQR`，输出 `"source": "jsqr"`
-
-**依赖安装：**
-- Python：`pip install -r requirements.txt`
-- Node.js：`npm install`（在 skill 目录下执行）
 
 ---
 
