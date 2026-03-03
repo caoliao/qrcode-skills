@@ -4,6 +4,8 @@
 
 基于[草料二维码开放 API](https://cli.im/open-api/qrcode-api/quick-start.html) 和本地库，无需 API Key。
 
+本 skills 不生成草料活码，生成的二维码是静态码。
+
 ## 功能概览
 
 | 功能 | 说明 |
