@@ -1,0 +1,153 @@
+# QR Code Skills
+
+为 Agent 赋予二维码生成与解码能力的 Skill 合集。
+
+基于[草料二维码开放 API](https://cli.im/open-api/qrcode-api/quick-start.html) 和本地 Python 库，无需 API Key。
+
+## 功能概览
+
+| 功能 | 说明 |
+|------|------|
+| 生成二维码 | 将文本/URL 转为二维码，返回链接并预览 |
+| 生成并保存到本地 | 下载二维码图片到指定路径 |
+| 解码二维码 | 从图片 URL 或本地文件识别二维码内容 |
+| 批量生成（URL） | 从 Excel/CSV/TXT 批量生成二维码链接列表 |
+| 批量生成（图片） | 从 Excel/CSV/TXT 批量生成二维码图片到本地 |
+| 批量解码 | 从 Excel/CSV/TXT 批量解码二维码，结果回写原文件 |
+
+## 安装
+
+### 1. 放置 Skill 目录
+
+直接将本项目clone 到 agents 的 skills 目录下：
+
+```shell
+git clone https://github.com/caoliao/qrcode-skills
+```
+
+### 2. 安装 Python 依赖
+
+```bash
+cd qrcode-skills
+pip install -r requirements.txt
+```
+
+### 3. 验证安装
+
+安装完成后，直接在 Cursor 中对 AI 说"帮我生成一个二维码"即可触发此 Skill。
+
+## 示例问答
+
+### 生成二维码
+
+> **你：** 帮我生成一个二维码，内容是 https://github.com
+
+> **AI：** 二维码已生成：
+>
+> ![QR Code](https://api.2dcode.biz/v1/create-qr-code?data=https%3A%2F%2Fgithub.com&size=400x400)
+>
+> **二维码链接：** `https://api.2dcode.biz/v1/create-qr-code?data=https%3A%2F%2Fgithub.com&size=400x400`
+
+---
+
+### 生成并保存到本地
+
+> **你：** 生成一个二维码保存到桌面，内容是 Hello World，SVG 格式
+
+> **AI：** *(执行脚本下载图片)*
+>
+> 二维码已生成并保存到本地：
+>
+> **二维码链接：** `https://api.2dcode.biz/v1/create-qr-code?data=Hello%20World&size=400x400&format=svg`
+> **本地文件：** `C:\Users\xxx\Desktop\qrcode.svg`
+
+---
+
+### 解码二维码（URL）
+
+> **你：** 帮我识别这个二维码 https://example.com/qr.png
+
+> **AI：** *(执行解码脚本)*
+>
+> 二维码解码结果（via zxing）：
+> - 内容：https://github.com
+
+---
+
+### 解码二维码（发送图片）
+
+> **你：** 帮我识别这个二维码 *(粘贴/拖入一张二维码图片)*
+
+> **AI：** *(获取图片路径，执行解码脚本)*
+>
+> 二维码解码结果（via zxing）：
+> - 内容：https://example.com
+
+---
+
+### 批量生成（URL 链接）
+
+> **你：** 我有一个 data.xlsx，帮我批量生成二维码
+
+> **AI：** 请问需要生成二维码 URL 链接，还是生成图片保存到本地？
+
+> **你：** 生成链接就行
+
+> **AI：** *(执行脚本)*
+>
+> 批量生成完成，共 50 个二维码链接，已保存到：`D:\output\urls.txt`
+
+---
+
+### 批量生成（图片）
+
+> **你：** 把 products.csv 里的链接列批量生成二维码图片，打包成 zip
+
+> **AI：** *(执行脚本)*
+>
+> 批量生成完成（via local）：共 200 个，成功 200 个，失败 0 个
+> 输出目录：`D:\output\qrcodes`
+> ZIP 文件：`D:\output\qrcodes.zip`
+
+---
+
+### 批量解码
+
+> **你：** 帮我批量解码 images.xlsx 里的二维码图片
+
+> **AI：** 检测到以下列，请问二维码图片 URL 在哪一列？
+>
+> | 列索引 | 列名 |
+> |--------|------|
+> | 0 | 产品名称 |
+> | 1 | 图片链接 |
+> | 2 | 备注 |
+
+> **你：** 第 1 列
+
+> **AI：** *(执行脚本)*
+>
+> 批量解码完成：共 50 个，成功 48 个，失败 2 个
+> 结果已写入：`D:\data\images.xlsx`（新增"解码结果"列）
+
+## 工程结构
+
+```
+qrcode-skills/
+├── README.md             # 本文件
+├── SKILL.md              # Agent Skill 主指令
+├── reference.md          # 草料 API 完整参考文档
+├── requirements.txt      # Python 依赖
+└── scripts/
+    ├── generate.py       # 单个生成并保存到本地
+    ├── batch_generate.py # 批量生成（URL 链接 / 图片）
+    ├── decode.py         # 单个解码（zxing 优先 + API 回退）
+    └── batch_decode.py   # 批量解码（回写原文件 / 输出 TXT）
+```
+
+## 技术说明
+
+- **生成**：默认直接拼接草料 API URL 返回（零延迟）；保存本地时下载图片；批量生成图片默认用本地 `qrcode` 库
+- **解码**：优先本地 `zxingcpp` 解码，失败时自动回退草料 API
+- **批量操作**：支持 Excel(.xlsx)、CSV、TXT 输入；自动检测数据列，无法判断时交互询问
+- **草料 API**：免费、无需认证，[官方文档](https://cli.im/open-api/qrcode-api/quick-start.html)
