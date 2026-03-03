@@ -57,13 +57,13 @@ npm install
 
 ### 生成二维码
 
-> **你：** 帮我生成一个二维码，内容是 https://github.com
+> **你：** 帮我生成一个二维码，内容是 https://cli.im
 
 > **AI：** 二维码已生成：
 >
-> ![QR Code](https://api.2dcode.biz/v1/create-qr-code?data=https%3A%2F%2Fgithub.com&size=400x400)
+> ![QR Code](https://api.2dcode.biz/v1/create-qr-code?data=https%3A%2F%2Fcli.im&size=400x400)
 >
-> **二维码链接：** `https://api.2dcode.biz/v1/create-qr-code?data=https%3A%2F%2Fgithub.com&size=400x400`
+> **二维码链接：** `https://api.2dcode.biz/v1/create-qr-code?data=https%3A%2F%2Fcli.im&size=400x400`
 
 ---
 
@@ -87,7 +87,7 @@ npm install
 > **AI：** *(执行解码脚本)*
 >
 > 二维码解码结果（via zxing）：
-> - 内容：https://github.com
+> - 内容：https://cli.im
 
 ---
 
