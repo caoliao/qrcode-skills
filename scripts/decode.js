@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * QR Code Decoder - 本地 jsQR 优先，失败时回退到草料 API (Node.js 版)
+ * QR Code Decoder - 本地 wechat-qr 优先，失败时回退到草料 API (Node.js 版)
  *
  * 用法:
  *   node scripts/decode.js [--force-api] <图片路径或URL>
@@ -8,7 +8,7 @@
  *   node scripts/decode.js [--force-api] --url <图片URL>
  *
  * 输出 JSON:
- *   {"source": "jsqr"|"api", "contents": ["..."]}
+ *   {"source": "wechat-qr"|"api", "contents": ["..."]}
  *   {"error": "..."}
  */
 
@@ -67,14 +67,20 @@ function downloadToTemp(url) {
   });
 }
 
-async function decodeWithJsqr(imagePath) {
+async function decodeWithWechat(imagePath) {
   try {
-    const Jimp = require("jimp");
-    const jsQR = require("jsqr");
-    const image = await Jimp.read(imagePath);
-    const { data, width, height } = image.bitmap;
-    const code = jsQR(new Uint8ClampedArray(data.buffer), width, height);
-    return code ? [code.data] : null;
+    const { scan } = await import("qr-scanner-wechat");
+    const sharp = require("sharp");
+    const { data, info } = await sharp(imagePath)
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    const result = await scan({
+      data: Uint8ClampedArray.from(data),
+      width: info.width,
+      height: info.height,
+    });
+    return result?.text ? [result.text] : null;
   } catch {
     return null;
   }
@@ -149,21 +155,21 @@ async function main() {
     if (!fs.existsSync(target)) error(`文件不存在: ${target}`);
 
     if (!forceApi) {
-      const results = await decodeWithJsqr(target);
-      if (results) output("jsqr", results);
+      const results = await decodeWithWechat(target);
+      if (results) output("wechat-qr", results);
     }
 
     const results = await decodeWithApiFile(target);
     if (results) output("api", results);
 
-    error("无法解码: 本地 jsQR 和远程 API 均未识别到二维码");
+    error("无法解码: 本地 wechat-qr 和远程 API 均未识别到二维码");
   } else {
     if (!forceApi) {
       let tmpPath = null;
       try {
         tmpPath = await downloadToTemp(target);
-        const results = await decodeWithJsqr(tmpPath);
-        if (results) output("jsqr", results);
+        const results = await decodeWithWechat(tmpPath);
+        if (results) output("wechat-qr", results);
       } catch { /* ignore */ } finally {
         if (tmpPath && fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath);
       }

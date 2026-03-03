@@ -68,10 +68,10 @@ function downloadToTemp(url) {
 
 function isUrl(s) { return s.startsWith("http://") || s.startsWith("https://"); }
 
-async function tryJsqr(source) {
+async function tryWechatQr(source) {
   try {
-    const Jimp = require("jimp");
-    const jsQR = require("jsqr");
+    const { scan } = await import("qr-scanner-wechat");
+    const sharp = require("sharp");
 
     let imgPath = source;
     let tmpPath = null;
@@ -80,10 +80,16 @@ async function tryJsqr(source) {
       imgPath = tmpPath;
     }
     try {
-      const image = await Jimp.read(imgPath);
-      const { data, width, height } = image.bitmap;
-      const code = jsQR(new Uint8ClampedArray(data.buffer), width, height);
-      return code ? code.data : null;
+      const { data, info } = await sharp(imgPath)
+        .ensureAlpha()
+        .raw()
+        .toBuffer({ resolveWithObject: true });
+      const result = await scan({
+        data: Uint8ClampedArray.from(data),
+        width: info.width,
+        height: info.height,
+      });
+      return result?.text || null;
     } finally {
       if (tmpPath && fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath);
     }
@@ -125,7 +131,7 @@ async function decodeApiFile(filePath) {
 }
 
 async function decodeSingle(source) {
-  const local = await tryJsqr(source);
+  const local = await tryWechatQr(source);
   if (local) return local;
 
   if (isUrl(source)) {

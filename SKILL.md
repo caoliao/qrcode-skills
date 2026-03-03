@@ -11,11 +11,26 @@ description: Generate and decode QR codes using CaoLiao QR Code API. Use when th
 
 所有脚本同时提供 Python 和 Node.js 两个版本，功能和参数完全一致。**执行任何脚本前，先确定运行时。**
 
-**选择策略：**
+**选择策略（首次执行脚本前完成）：**
 
-1. 优先检测用户环境中是否有 Python（`python --version`）
-2. 若 Python 不可用，使用 Node.js（`node --version`）
+1. 检测 Python 是否可用：`python --version`（或 `python3 --version`）
+2. 若 Python 不可用，检测 Node.js：`node --version`
 3. 两者都有时默认用 Python
+
+**依赖检查与自动安装：**
+
+确定运行时后，检查依赖是否已安装。若缺失则自动安装，无需询问用户：
+
+- **Python**：检查 `pip list` 中是否包含关键包（如 `Pillow`），若缺失则执行：
+  ```bash
+  pip install -r requirements.txt
+  ```
+- **Node.js**：检查 skill 目录下是否存在 `node_modules/`，若缺失则执行：
+  ```bash
+  npm install
+  ```
+
+安装完成后再执行脚本。若安装失败，提示用户手动安装。
 
 **命令对照表：**
 
@@ -30,11 +45,7 @@ description: Generate and decode QR codes using CaoLiao QR Code API. Use when th
 
 **差异说明：**
 - Python 版本地解码使用 `zxingcpp`，输出 `"source": "zxing"`
-- Node.js 版本地解码使用 `jsQR`，输出 `"source": "jsqr"`
-
-**依赖安装：**
-- Python：`pip install -r requirements.txt`
-- Node.js：`npm install`（在 skill 目录下执行）
+- Node.js 版本地解码使用 [`qr-scanner-wechat`](https://github.com/antfu/qr-scanner-wechat)（基于 OpenCV + 微信算法，识别率更高），输出 `"source": "wechat-qr"`
 
 ---
 
@@ -340,7 +351,7 @@ TXT 输出：<output_txt>（仅单独输出时显示）
 ## 注意事项
 
 - 生成二维码默认无需网络请求，直接拼接 URL 即可；保存本地或批量生成时才需要下载
-- 解码二维码优先本地库（Python: zxingcpp / Node: jsQR），仅在本地失败时才调用远程 API
+- 解码二维码优先本地库（Python: zxingcpp / Node: qr-scanner-wechat），仅在本地失败时才调用远程 API
 - data 参数需要正确的 URL 编码（空格→%20，中文等特殊字符需编码）
 - 草料 API 无需认证、免费使用，但禁止恶意滥用
 - 批量操作时，若脚本返回 `need_column`，必须先向用户展示列信息并确认后再重新执行
