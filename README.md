@@ -2,7 +2,7 @@
 
 为 Agent 赋予二维码生成与解码能力的 Skill 合集。
 
-基于[草料二维码开放 API](https://cli.im/open-api/qrcode-api/quick-start.html) 和本地 Python 库，无需 API Key。
+基于[草料二维码开放 API](https://cli.im/open-api/qrcode-api/quick-start.html) 和本地库，无需 API Key。
 
 ## 功能概览
 
@@ -25,12 +25,27 @@
 git clone https://github.com/caoliao/qrcode-skills
 ```
 
-### 2. 安装 Python 依赖
+### 2. 安装依赖（二选一）
+
+**方式 A：Python 环境**
 
 ```bash
 cd qrcode-skills
 pip install -r requirements.txt
 ```
+
+依赖：`zxingcpp`、`Pillow`、`openpyxl`、`qrcode`
+
+**方式 B：Node.js 环境（无 Python 时）**
+
+```bash
+cd qrcode-skills
+npm install
+```
+
+依赖：`qrcode`、`jsqr`、`jimp`、`xlsx`、`archiver`
+
+> 两套脚本功能和参数完全一致，Agent 会自动检测环境并选择可用的运行时。
 
 ### 3. 验证安装
 
@@ -134,20 +149,22 @@ pip install -r requirements.txt
 
 ```
 qrcode-skills/
-├── README.md             # 本文件
-├── SKILL.md              # Agent Skill 主指令
-├── reference.md          # 草料 API 完整参考文档
-├── requirements.txt      # Python 依赖
+├── README.md                   # 本文件
+├── SKILL.md                    # Agent Skill 主指令
+├── reference.md                # 草料 API 完整参考文档
+├── requirements.txt            # Python 依赖
+├── package.json                # Node.js 依赖
 └── scripts/
-    ├── generate.py       # 单个生成并保存到本地
-    ├── batch_generate.py # 批量生成（URL 链接 / 图片）
-    ├── decode.py         # 单个解码（zxing 优先 + API 回退）
-    └── batch_decode.py   # 批量解码（回写原文件 / 输出 TXT）
+    ├── generate.py / .js       # 单个生成并保存到本地
+    ├── batch_generate.py / .js # 批量生成（URL 链接 / 图片）
+    ├── decode.py / .js         # 单个解码（本地优先 + API 回退）
+    └── batch_decode.py / .js   # 批量解码（回写原文件 / 输出 TXT）
 ```
 
 ## 技术说明
 
-- **生成**：默认直接拼接草料 API URL 返回（零延迟）；保存本地时下载图片；批量生成图片默认用本地 `qrcode` 库
-- **解码**：优先本地 `zxingcpp` 解码，失败时自动回退草料 API
+- **双运行时**：所有脚本同时提供 Python 和 Node.js 版本，参数和输出格式完全一致
+- **生成**：默认直接拼接草料 API URL 返回（零延迟）；保存本地时下载图片；批量生成图片默认用本地库（Python: `qrcode` / Node: `qrcode`）
+- **解码**：优先本地库解码（Python: `zxingcpp` / Node: `jsQR` + `jimp`），失败时自动回退草料 API
 - **批量操作**：支持 Excel(.xlsx)、CSV、TXT 输入；自动检测数据列，无法判断时交互询问
 - **草料 API**：免费、无需认证，[官方文档](https://cli.im/open-api/qrcode-api/quick-start.html)
