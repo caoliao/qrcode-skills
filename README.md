@@ -1,189 +1,192 @@
 # QR Code Skills
 
-为 Agent 赋予二维码生成与解码能力的 Skill 合集。
+English | [中文](README.zh-cn.md)
 
-基于[草料二维码开放 API](https://cli.im/open-api/qrcode-api/quick-start.html) 和本地库，无需 API Key。
+An agent skill for generating and decoding QR codes.
 
-本 skills 不生成草料活码，生成的二维码是静态码。
+Built on the [CaoLiao QR Code API](https://cli.im/open-api/qrcode-api/quick-start.html) and local libraries. No API key required.
 
-## 功能概览
+This skill generates static QR codes only (not CaoLiao dynamic codes).
 
-| 功能 | 说明 |
-|------|------|
-| 生成二维码 | 将文本/URL 转为二维码，返回链接并预览 |
-| 生成并保存到本地 | 下载二维码图片到指定路径 |
-| 解码二维码 | 从图片 URL 或本地文件识别二维码内容 |
-| 批量生成（URL） | 从 Excel/CSV/TXT 批量生成二维码链接列表 |
-| 批量生成（图片） | 从 Excel/CSV/TXT 批量生成二维码图片到本地 |
-| 批量解码 | 从 Excel/CSV/TXT 批量解码二维码，结果回写原文件 |
+## Features
 
-## 安装
+| Feature | Description |
+|---------|-------------|
+| Generate QR code | Encode text/URL into a QR code, return link with preview |
+| Generate & save locally | Download QR code image to a specified path |
+| Decode QR code | Read QR code content from an image URL or local file |
+| Batch generate (URL) | Generate QR code URL list from Excel/CSV/TXT |
+| Batch generate (image) | Generate QR code images locally from Excel/CSV/TXT |
+| Batch decode | Batch decode QR codes from Excel/CSV/TXT, write results back |
 
-### 通过 skills CLI 安装（推荐）
+## Installation
+
+### Via skills CLI (Recommended)
 
 ```bash
 npx skills add caoliao/qrcode-skills
 ```
 
 ```bash
-# 全局安装（跨项目可用）
+# Global install (available across projects)
 npx skills add caoliao/qrcode-skills -g
 
-# 安装到指定 Agent
+# Install for a specific agent
 npx skills add caoliao/qrcode-skills -a cursor
 npx skills add caoliao/qrcode-skills -a claude-code
 ```
 
-### 手动安装
+### Manual Installation
 
-直接将本项目 clone 到 Agent 的 skills 目录下：
+Clone this repository into your agent's skills directory:
 
 ```bash
 git clone https://github.com/caoliao/qrcode-skills
 ```
 
-### 安装依赖（二选一）
+### Install Dependencies (pick one)
 
-首次使用时 Agent 会自动检测环境并安装依赖，也可以手动安装：
+The agent will auto-detect your environment and install dependencies on first use. You can also install manually:
 
-**Python 环境**
+**Python**
 
 ```bash
 cd qrcode-skills
 pip install -r requirements.txt
 ```
 
-依赖：`zxingcpp`、`Pillow`、`openpyxl`、`qrcode`
+Dependencies: `zxingcpp`, `Pillow`, `openpyxl`, `qrcode`
 
-**Node.js 环境（无 Python 时）**
+**Node.js (when Python is unavailable)**
 
 ```bash
 cd qrcode-skills
 npm install
 ```
 
-依赖：`qrcode`、`jsqr`、`jimp`、`xlsx`、`archiver`
+Dependencies: `qrcode`, `jsqr`, `jimp`, `xlsx`, `archiver`
 
-> 两套脚本功能和参数完全一致，Agent 会自动检测环境并选择可用的运行时。
+> Both script sets are functionally identical. The agent auto-detects the available runtime.
 
-### 验证安装
+### Verify Installation
 
-安装完成后，直接发送给 Agent "帮我生成一个二维码"即可触发此 Skill。
+After installation, simply ask your agent "Generate a QR code for me" to trigger this skill.
 
-## 示例问答
+## Examples
 
-### 生成二维码
+### Generate a QR Code
 
-> **你：** 帮我生成一个二维码，内容是 https://cli.im
+> **You:** Generate a QR code for https://cli.im
 
-> **AI：** 二维码已生成：
+> **AI:** QR code generated:
 >
 > ![QR Code](https://api.2dcode.biz/v1/create-qr-code?data=https%3A%2F%2Fcli.im&size=400x400)
 >
-> **二维码链接：** `https://api.2dcode.biz/v1/create-qr-code?data=https%3A%2F%2Fcli.im&size=400x400`
+> **QR Code URL:** `https://api.2dcode.biz/v1/create-qr-code?data=https%3A%2F%2Fcli.im&size=400x400`
 
 ---
 
-### 生成并保存到本地
+### Generate & Save Locally
 
-> **你：** 生成一个二维码保存到桌面，内容是 Hello World，SVG 格式
+> **You:** Generate a QR code and save it to the desktop, content is Hello World, SVG format
 
-> **AI：** *(执行脚本下载图片)*
+> **AI:** *(runs script to download image)*
 >
-> 二维码已生成并保存到本地：
+> QR code generated and saved locally:
 >
-> **二维码链接：** `https://api.2dcode.biz/v1/create-qr-code?data=Hello%20World&size=400x400&format=svg`
-> **本地文件：** `C:\Users\xxx\Desktop\qrcode.svg`
+> **QR Code URL:** `https://api.2dcode.biz/v1/create-qr-code?data=Hello%20World&size=400x400&format=svg`
+> **Local file:** `C:\Users\xxx\Desktop\qrcode.svg`
 
 ---
 
-### 解码二维码（URL）
+### Decode a QR Code (URL)
 
-> **你：** 帮我识别这个二维码 https://example.com/qr.png
+> **You:** Decode this QR code https://example.com/qr.png
 
-> **AI：** *(执行解码脚本)*
+> **AI:** *(runs decode script)*
 >
-> 二维码解码结果（via zxing）：
-> - 内容：https://cli.im
+> QR code decoded (via zxing):
+> - Content: https://cli.im
 
 ---
 
-### 解码二维码（发送图片）
+### Decode a QR Code (Image)
 
-> **你：** 帮我识别这个二维码 *(粘贴/拖入一张二维码图片)*
+> **You:** Decode this QR code *(paste/drag an image)*
 
-> **AI：** *(获取图片路径，执行解码脚本)*
+> **AI:** *(gets image path, runs decode script)*
 >
-> 二维码解码结果（via zxing）：
-> - 内容：https://example.com
+> QR code decoded (via zxing):
+> - Content: https://example.com
 
 ---
 
-### 批量生成（URL 链接）
+### Batch Generate (URL Links)
 
-> **你：** 我有一个 data.xlsx，帮我批量生成二维码
+> **You:** I have a data.xlsx, batch generate QR codes
 
-> **AI：** 请问需要生成二维码 URL 链接，还是生成图片保存到本地？
+> **AI:** Would you like QR code URL links or image files saved locally?
 
-> **你：** 生成链接就行
+> **You:** Links are fine
 
-> **AI：** *(执行脚本)*
+> **AI:** *(runs script)*
 >
-> 批量生成完成，共 50 个二维码链接，已保存到：`D:\output\urls.txt`
+> Batch generation complete: 50 QR code links saved to `D:\output\urls.txt`
 
 ---
 
-### 批量生成（图片）
+### Batch Generate (Images)
 
-> **你：** 把 products.csv 里的链接列批量生成二维码图片，打包成 zip
+> **You:** Batch generate QR code images from the link column in products.csv, zip them up
 
-> **AI：** *(执行脚本)*
+> **AI:** *(runs script)*
 >
-> 批量生成完成（via local）：共 200 个，成功 200 个，失败 0 个
-> 输出目录：`D:\output\qrcodes`
-> ZIP 文件：`D:\output\qrcodes.zip`
+> Batch generation complete (via local): 200 total, 200 succeeded, 0 failed
+> Output directory: `D:\output\qrcodes`
+> ZIP file: `D:\output\qrcodes.zip`
 
 ---
 
-### 批量解码
+### Batch Decode
 
-> **你：** 帮我批量解码 images.xlsx 里的二维码图片
+> **You:** Batch decode QR code images in images.xlsx
 
-> **AI：** 检测到以下列，请问二维码图片 URL 在哪一列？
+> **AI:** Detected the following columns. Which column contains the QR code image URLs?
 >
-> | 列索引 | 列名 |
-> |--------|------|
-> | 0 | 产品名称 |
-> | 1 | 图片链接 |
-> | 2 | 备注 |
+> | Index | Column Name |
+> |-------|-------------|
+> | 0 | Product Name |
+> | 1 | Image Link |
+> | 2 | Notes |
 
-> **你：** 第 1 列
+> **You:** Column 1
 
-> **AI：** *(执行脚本)*
+> **AI:** *(runs script)*
 >
-> 批量解码完成：共 50 个，成功 48 个，失败 2 个
-> 结果已写入：`D:\data\images.xlsx`（新增"解码结果"列）
+> Batch decode complete: 50 total, 48 succeeded, 2 failed
+> Results written to: `D:\data\images.xlsx` (new "Decode Result" column added)
 
-## 工程结构
+## Project Structure
 
 ```
 qrcode-skills/
-├── README.md                   # 本文件
-├── SKILL.md                    # Agent Skill 主指令
-├── reference.md                # 草料 API 完整参考文档
-├── requirements.txt            # Python 依赖
-├── package.json                # Node.js 依赖
+├── README.md                   # Chinese documentation
+├── README.en.md                # English documentation (this file)
+├── SKILL.md                    # Agent skill instructions
+├── reference.md                # CaoLiao API reference
+├── requirements.txt            # Python dependencies
+├── package.json                # Node.js dependencies
 └── scripts/
-    ├── generate.py / .js       # 单个生成并保存到本地
-    ├── batch_generate.py / .js # 批量生成（URL 链接 / 图片）
-    ├── decode.py / .js         # 单个解码（本地优先 + API 回退）
-    └── batch_decode.py / .js   # 批量解码（回写原文件 / 输出 TXT）
+    ├── generate.py / .js       # Single QR code generation & save
+    ├── batch_generate.py / .js # Batch generation (URL links / images)
+    ├── decode.py / .js         # Single decode (local-first + API fallback)
+    └── batch_decode.py / .js   # Batch decode (write-back / TXT output)
 ```
 
-## 技术说明
+## Technical Details
 
-- **双运行时**：所有脚本同时提供 Python 和 Node.js 版本，参数和输出格式完全一致
-- **生成**：默认直接拼接草料 API URL 返回（零延迟）；保存本地时下载图片；批量生成图片默认用本地库（Python: `qrcode` / Node: `qrcode`）
-- **解码**：优先本地库解码（Python: `zxingcpp` / Node: `jsQR` + `jimp`），失败时自动回退草料 API
-- **批量操作**：支持 Excel(.xlsx)、CSV、TXT 输入；自动检测数据列，无法判断时交互询问
-- **草料 API**：免费、无需认证，[官方文档](https://cli.im/open-api/qrcode-api/quick-start.html)
+- **Dual runtime**: All scripts are available in both Python and Node.js with identical parameters and output formats
+- **Generation**: Constructs CaoLiao API URLs directly by default (zero latency); downloads images when saving locally; batch image generation uses local libraries (Python: `qrcode` / Node: `qrcode`)
+- **Decoding**: Prefers local library decoding (Python: `zxingcpp` / Node: `jsQR` + `jimp`), falls back to CaoLiao API on failure
+- **Batch operations**: Supports Excel (.xlsx), CSV, TXT input; auto-detects data columns, prompts user when ambiguous
+- **CaoLiao API**: Free, no authentication required. [Official docs](https://cli.im/open-api/qrcode-api/quick-start.html)
