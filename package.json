@@ -1,7 +1,6 @@
 {
   "name": "qrcode-skills",
   "version": "1.0.0",
-  "private": true,
   "description": "QR Code generation & decoding scripts (Node.js fallback)",
   "dependencies": {
     "qrcode": "^1.5.0",

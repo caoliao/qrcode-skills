@@ -19,17 +19,34 @@
 
 ## 安装
 
-### 1. 放置 Skill 目录
+### 通过 skills CLI 安装（推荐）
 
-直接将本项目clone 到 agents 的 skills 目录下：
+```bash
+npx skills add caoliao/qrcode-skills
+```
 
-```shell
+```bash
+# 全局安装（跨项目可用）
+npx skills add caoliao/qrcode-skills -g
+
+# 安装到指定 Agent
+npx skills add caoliao/qrcode-skills -a cursor
+npx skills add caoliao/qrcode-skills -a claude-code
+```
+
+### 手动安装
+
+直接将本项目 clone 到 Agent 的 skills 目录下：
+
+```bash
 git clone https://github.com/caoliao/qrcode-skills
 ```
 
-### 2. 安装依赖（二选一）
+### 安装依赖（二选一）
 
-**方式 A：Python 环境**
+首次使用时 Agent 会自动检测环境并安装依赖，也可以手动安装：
+
+**Python 环境**
 
 ```bash
 cd qrcode-skills
@@ -38,7 +55,7 @@ pip install -r requirements.txt
 
 依赖：`zxingcpp`、`Pillow`、`openpyxl`、`qrcode`
 
-**方式 B：Node.js 环境（无 Python 时）**
+**Node.js 环境（无 Python 时）**
 
 ```bash
 cd qrcode-skills
@@ -49,9 +66,9 @@ npm install
 
 > 两套脚本功能和参数完全一致，Agent 会自动检测环境并选择可用的运行时。
 
-### 3. 验证安装
+### 验证安装
 
-安装完成后，直接在发送给 Agent "帮我生成一个二维码"即可触发此 Skill。
+安装完成后，直接发送给 Agent "帮我生成一个二维码"即可触发此 Skill。
 
 ## 示例问答
 
