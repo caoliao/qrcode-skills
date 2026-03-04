@@ -1,6 +1,6 @@
-# QR Code Skills
-
 [English](README.md) | 中文
+
+# QR Code Skills
 
 为 Agent 赋予二维码生成与解码能力的 Skill 合集。
 

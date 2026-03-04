@@ -1,6 +1,6 @@
-# QR Code Skills
-
 English | [中文](README.zh-cn.md)
+
+# QR Code Skills
 
 An agent skill for generating and decoding QR codes.
 
